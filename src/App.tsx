@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react';
 import './index.css';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import LoginPage from './components/LoginPage';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import EmployeeMaster from './components/EmployeeMaster';
@@ -10,7 +12,7 @@ import Toast, { ToastMessage } from './components/Toast';
 
 export type PageId = 'dashboard' | 'employees' | 'attendance' | 'payroll' | 'settings';
 
-function App() {
+function AuthenticatedApp() {
   const [activePage, setActivePage] = useState<PageId>('dashboard');
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
@@ -51,6 +53,33 @@ function App() {
       </main>
       <Toast toasts={toasts} onRemove={removeToast} />
     </div>
+  );
+}
+
+function AppGate() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="app-loading">
+        <div className="app-loading-spinner" />
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <LoginPage />;
+  }
+
+  return <AuthenticatedApp />;
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppGate />
+    </AuthProvider>
   );
 }
 

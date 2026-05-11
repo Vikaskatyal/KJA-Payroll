@@ -1,5 +1,6 @@
-import { LayoutDashboard, Users, FileSpreadsheet, Calculator, Settings } from 'lucide-react';
+import { LayoutDashboard, Users, FileSpreadsheet, Calculator, Settings, LogOut } from 'lucide-react';
 import type { PageId } from '../App';
+import { useAuth } from '../contexts/AuthContext';
 
 interface SidebarProps {
   activePage: PageId;
@@ -15,6 +16,7 @@ const navItems: { id: PageId; label: string; icon: React.ReactNode; section?: st
 ];
 
 export default function Sidebar({ activePage, onNavigate }: SidebarProps) {
+  const { user, signOut } = useAuth();
   let lastSection = '';
 
   return (
@@ -48,7 +50,21 @@ export default function Sidebar({ activePage, onNavigate }: SidebarProps) {
           );
         })}
       </nav>
-      <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+
+      {/* User info + Logout */}
+      {user && (
+        <div style={{ padding: '0 10px 8px' }}>
+          <div style={{ padding: '10px 14px', fontSize: 12, color: 'var(--gray-400)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {user.email}
+          </div>
+          <button className="sidebar-logout-btn" onClick={signOut}>
+            <LogOut size={16} />
+            Sign Out
+          </button>
+        </div>
+      )}
+
+      <div style={{ padding: '12px 20px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
         <div style={{ fontSize: 11, color: 'var(--gray-500)' }}>
           Powered by
         </div>
